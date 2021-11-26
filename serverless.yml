@@ -10,6 +10,12 @@ custom:
       - CognitoUserPoolServerClientId
     output:
       file: ./.env-outputs
+  stage: ${opt:stage, self:provider.stage}
+  logLevel:
+    prod: ERROR
+    default: INFO
+  serverless-iam-roles-per-function:
+    defaultInherit: true
 
 provider:
   name: aws
@@ -20,6 +26,16 @@ provider:
     name: workshop-sls-deployment
   eventBridge:
     useCloudFormation: true
+  region: ${opt:region, 'us-east-1'}
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource: "*"
 
   environment:
     rest_api_url:
@@ -27,13 +43,17 @@ provider:
         - ""
         - - https://
           - !Ref ApiGatewayRestApi
-          - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+          - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
     serviceName: ${self:service}
-    stage: ${self:provider.stage}
+    stage: ${self:custom.stage}
+    LOG_LEVEL: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
+    SAMPLE_DEBUG_LOG_RATE: 0.1
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
   get-index:
     handler: functions/get-index.handler
+    memorySize: 256
     events:
       - http:
           path: /
@@ -44,7 +64,7 @@ functions:
           - ""
           - - https://
             - !Ref ApiGatewayRestApi
-            - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/restaurants
+            - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}/restaurants
       cognito_user_pool_id: !Ref CognitoUserPool
       cognito_client_id: !Ref WebCognitoUserPoolClient
       orders_api:
@@ -52,14 +72,15 @@ functions:
           - ""
           - - https://
             - !Ref ApiGatewayRestApi
-            - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/orders
+            - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}/orders
     iamRoleStatements:
       - Effect: Allow
         Action: execute-api:Invoke
-        Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/${self:provider.stage}/GET/restaurants
+        Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/${self:custom.stage}/GET/restaurants
 
   get-restaurants:
     handler: functions/get-restaurants.handler
+    memorySize: 512
     events:
       - http:
           path: /restaurants/
@@ -77,6 +98,7 @@ functions:
 
   search-restaurants:
     handler: functions/search-restaurants.handler
+    # memorySize: 512
     events:
       - http:
           path: /restaurants/search
@@ -95,13 +117,14 @@ functions:
         Action: ssm:GetParameters*
         Resource:
           - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
-          - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${self:provider.stage}/search-restaurants/secretString
+          - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${self:custom.stage}/search-restaurants/secretString
       - Effect: Allow
         Action: kms:Decrypt
         Resource: ${ssm:/${self:service}/dev/kmsArn}
 
   place-order:
     handler: functions/place-order.handler
+    # memorySize: 512
     events:
       - http:
           path: /orders
@@ -119,6 +142,7 @@ functions:
 
   notify-restaurant:
     handler: functions/notify-restaurant.handler
+    # memorySize: 512
     events:
       - eventBridge:
           eventBus: !Ref EventBus
@@ -142,7 +166,7 @@ resources:
   Conditions:
     IsE2eTest:
       Fn::Equals:
-        - ${self:provider.stage}
+        - ${self:custom.stage}
         - sam
   Resources:
     RestaurantsTable:
@@ -215,17 +239,17 @@ resources:
       Type: AWS::SSM::Parameter
       Properties:
         Type: String
-        Name: /${self:service}/${self:provider.stage}/serviceUrl
+        Name: /${self:service}/${self:custom.stage}/serviceUrl
         Value:
           Fn::Join:
             - ""
             - - https://
               - !Ref ApiGatewayRestApi
-              - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+              - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
     EventBus:
       Type: AWS::Events::EventBus
       Properties:
-        Name: order_events_${self:provider.stage}_${self:custom.name}
+        Name: order_events_${self:custom.stage}_${self:custom.name}
     RestaurantNotificationTopic:
       Type: AWS::SNS::Topic
     E2eTestQueue:

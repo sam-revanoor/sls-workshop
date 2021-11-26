@@ -4,6 +4,8 @@ const tearDown = require("../steps/teardown");
 const { init } = require("../steps/init");
 const messages = require("../messages");
 
+jest.setTimeout(30000);
+
 describe("Given an authenticated user", () => {
   let user;
 

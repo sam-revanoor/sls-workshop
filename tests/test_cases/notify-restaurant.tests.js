@@ -4,6 +4,8 @@ const chance = require("chance").Chance();
 const messages = require("../messages");
 console.log = jest.fn();
 
+jest.setTimeout(30000);
+
 describe(`When we invoke the notify-restaurant function`, () => {
   const event = {
     source: "big-mouth",
