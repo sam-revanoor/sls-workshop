@@ -4,6 +4,12 @@ custom:
   name: samrevanoor
   export-env:
     overwrite: true
+  exportOutputs:
+    include:
+      - E2eTestQueueUrl
+      - CognitoUserPoolServerClientId
+    output:
+      file: ./.env-outputs
 
 provider:
   name: aws
@@ -14,28 +20,6 @@ provider:
     name: workshop-sls-deployment
   eventBridge:
     useCloudFormation: true
-  iamRoleStatements:
-    - Effect: Allow
-      Action: dynamodb:scan
-      Resource: !GetAtt RestaurantsTable.Arn
-    - Effect: Allow
-      Action: execute-api:Invoke
-      Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/${self:provider.stage}/GET/restaurants
-    - Effect: Allow
-      Action: ssm:GetParameters*
-      Resource:
-        - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/dev/get-restaurants/config
-        - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
-        - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${self:provider.stage}/search-restaurants/secretString
-    - Effect: Allow
-      Action: kms:Decrypt
-      Resource: ${ssm:/${self:service}/dev/kmsArn}
-    - Effect: Allow
-      Action: events:PutEvents
-      Resource: !GetAtt EventBus.Arn
-    - Effect: Allow
-      Action: sns:Publish
-      Resource: !Ref RestaurantNotificationTopic
 
   environment:
     rest_api_url:
@@ -63,13 +47,16 @@ functions:
             - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/restaurants
       cognito_user_pool_id: !Ref CognitoUserPool
       cognito_client_id: !Ref WebCognitoUserPoolClient
-      cognito_server_client_id: !Ref ServerCognitoUserPoolClient
       orders_api:
         Fn::Join:
           - ""
           - - https://
             - !Ref ApiGatewayRestApi
             - .execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/orders
+    iamRoleStatements:
+      - Effect: Allow
+        Action: execute-api:Invoke
+        Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/${self:provider.stage}/GET/restaurants
 
   get-restaurants:
     handler: functions/get-restaurants.handler
@@ -80,6 +67,13 @@ functions:
           authorizer: aws_iam
     environment:
       restaurants_table: !Ref RestaurantsTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:scan
+        Resource: !GetAtt RestaurantsTable.Arn
+      - Effect: Allow
+        Action: ssm:GetParameters*
+        Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/dev/get-restaurants/config
 
   search-restaurants:
     handler: functions/search-restaurants.handler
@@ -93,6 +87,18 @@ functions:
             arn: !GetAtt CognitoUserPool.Arn
     environment:
       restaurants_table: !Ref RestaurantsTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:scan
+        Resource: !GetAtt RestaurantsTable.Arn
+      - Effect: Allow
+        Action: ssm:GetParameters*
+        Resource:
+          - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
+          - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${self:provider.stage}/search-restaurants/secretString
+      - Effect: Allow
+        Action: kms:Decrypt
+        Resource: ${ssm:/${self:service}/dev/kmsArn}
 
   place-order:
     handler: functions/place-order.handler
@@ -106,6 +112,10 @@ functions:
             arn: !GetAtt CognitoUserPool.Arn
     environment:
       bus_name: !Ref EventBus
+    iamRoleStatements:
+      - Effect: Allow
+        Action: events:PutEvents
+        Resource: !GetAtt EventBus.Arn
 
   notify-restaurant:
     handler: functions/notify-restaurant.handler
@@ -120,8 +130,20 @@ functions:
     environment:
       bus_name: !Ref EventBus
       restaurant_notification_topic: !Ref RestaurantNotificationTopic
+    iamRoleStatements:
+      - Effect: Allow
+        Action: events:PutEvents
+        Resource: !GetAtt EventBus.Arn
+      - Effect: Allow
+        Action: sns:Publish
+        Resource: !Ref RestaurantNotificationTopic
 
 resources:
+  Conditions:
+    IsE2eTest:
+      Fn::Equals:
+        - ${self:provider.stage}
+        - sam
   Resources:
     RestaurantsTable:
       Type: AWS::DynamoDB::Table
@@ -206,6 +228,69 @@ resources:
         Name: order_events_${self:provider.stage}_${self:custom.name}
     RestaurantNotificationTopic:
       Type: AWS::SNS::Topic
+    E2eTestQueue:
+      Type: AWS::SQS::Queue
+      Condition: IsE2eTest
+      Properties:
+        MessageRetentionPeriod: 60
+        VisibilityTimeout: 1
+    E2eTestQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Condition: IsE2eTest
+      Properties:
+        Queues:
+          - !Ref E2eTestQueue
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: SQS:SendMessage
+              Resource: !GetAtt E2eTestQueue.Arn
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: !Ref RestaurantNotificationTopic
+            - Effect: Allow
+              Principal: "*"
+              Action: SQS:SendMessage
+              Resource: !GetAtt E2eTestQueue.Arn
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: !GetAtt E2eTestEventBridgeRule.Arn
+    E2eTestSnsSubscription:
+      Type: AWS::SNS::Subscription
+      Condition: IsE2eTest
+      Properties:
+        Protocol: sqs
+        Endpoint: !GetAtt E2eTestQueue.Arn
+        RawMessageDelivery: false
+        Region: !Ref AWS::Region
+        TopicArn: !Ref RestaurantNotificationTopic
+    E2eTestEventBridgeRule:
+      Type: AWS::Events::Rule
+      Condition: IsE2eTest
+      Properties:
+        EventBusName: !Ref EventBus
+        EventPattern:
+          source: ["big-mouth"]
+        State: ENABLED
+        Targets:
+          - Arn: !GetAtt E2eTestQueue.Arn
+            Id: e2eTestQueue
+            InputTransformer:
+              InputPathsMap:
+                source: "$.source"
+                detailType: "$.detail-type"
+                detail: "$.detail"
+              InputTemplate: !Sub >
+                {
+                  "event": {
+                    "source": <source>,
+                    "detail-type": <detailType>,
+                    "detail": <detail>
+                  },
+                  "eventBusName": "${EventBus}"
+                }
 
   Outputs:
     RestaurantsTableName:
@@ -232,5 +317,11 @@ resources:
     RestaurantNotificationTopicArn:
       Value: !Ref RestaurantNotificationTopic
 
+    E2eTestQueueUrl:
+      Condition: IsE2eTest
+      Value: !Ref E2eTestQueue
+
 plugins:
   - serverless-export-env
+  - serverless-export-outputs
+  - serverless-iam-roles-per-function
