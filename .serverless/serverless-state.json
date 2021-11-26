@@ -180,12 +180,12 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "workshop-sls-deployment",
-                "S3Key": "serverless/workshop-samrevanoor/sam/1637942530805-2021-11-26T16:02:10.805Z/workshop-samrevanoor.zip"
+                "S3Key": "serverless/workshop-samrevanoor/sam/1637945954744-2021-11-26T16:59:14.744Z/workshop-samrevanoor.zip"
               },
               "Handler": "functions/get-index.handler",
               "Runtime": "nodejs12.x",
               "FunctionName": "workshop-samrevanoor-sam-get-index",
-              "MemorySize": 1024,
+              "MemorySize": 256,
               "Timeout": 6,
               "TracingConfig": {
                 "Mode": "Active"
@@ -249,12 +249,12 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "workshop-sls-deployment",
-                "S3Key": "serverless/workshop-samrevanoor/sam/1637942530805-2021-11-26T16:02:10.805Z/workshop-samrevanoor.zip"
+                "S3Key": "serverless/workshop-samrevanoor/sam/1637945954744-2021-11-26T16:59:14.744Z/workshop-samrevanoor.zip"
               },
               "Handler": "functions/get-restaurants.handler",
               "Runtime": "nodejs12.x",
               "FunctionName": "workshop-samrevanoor-sam-get-restaurants",
-              "MemorySize": 1024,
+              "MemorySize": 512,
               "Timeout": 6,
               "TracingConfig": {
                 "Mode": "Active"
@@ -291,7 +291,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "workshop-sls-deployment",
-                "S3Key": "serverless/workshop-samrevanoor/sam/1637942530805-2021-11-26T16:02:10.805Z/workshop-samrevanoor.zip"
+                "S3Key": "serverless/workshop-samrevanoor/sam/1637945954744-2021-11-26T16:59:14.744Z/workshop-samrevanoor.zip"
               },
               "Handler": "functions/search-restaurants.handler",
               "Runtime": "nodejs12.x",
@@ -333,7 +333,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "workshop-sls-deployment",
-                "S3Key": "serverless/workshop-samrevanoor/sam/1637942530805-2021-11-26T16:02:10.805Z/workshop-samrevanoor.zip"
+                "S3Key": "serverless/workshop-samrevanoor/sam/1637945954744-2021-11-26T16:59:14.744Z/workshop-samrevanoor.zip"
               },
               "Handler": "functions/place-order.handler",
               "Runtime": "nodejs12.x",
@@ -375,7 +375,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "workshop-sls-deployment",
-                "S3Key": "serverless/workshop-samrevanoor/sam/1637942530805-2021-11-26T16:02:10.805Z/workshop-samrevanoor.zip"
+                "S3Key": "serverless/workshop-samrevanoor/sam/1637945954744-2021-11-26T16:59:14.744Z/workshop-samrevanoor.zip"
               },
               "Handler": "functions/notify-restaurant.handler",
               "Runtime": "nodejs12.x",
@@ -415,54 +415,54 @@
               "NotifyDashrestaurantLogGroup"
             ]
           },
-          "GetDashindexLambdaVersionJaE9iFJBUFGHJWQvH77nqGi43bAVCfRtnzkwORuICk": {
+          "GetDashindexLambdaVersionkNT9LrbCycNIiaCMQB8q2hmek4h4VSOrgbjxbsy2c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetDashindexLambdaFunction"
               },
-              "CodeSha256": "F48UbSkuCPBaZ7uTEz3/pwCjspdJDZ1hHvxHPouBZbo="
+              "CodeSha256": "41sT0IqcN6XkQWEjWElS0bZO5X9MBi4IY6zc4SO0c1Q="
             }
           },
-          "GetDashrestaurantsLambdaVersiono263qMK7ZAwnMjyQH5yaS5FRbmRZC1vpTn6iISsxqqo": {
+          "GetDashrestaurantsLambdaVersion5sqlLYgQj0BAqqLxTkLRVo5KeDySDs6Puus5bpnYBT8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetDashrestaurantsLambdaFunction"
               },
-              "CodeSha256": "F48UbSkuCPBaZ7uTEz3/pwCjspdJDZ1hHvxHPouBZbo="
+              "CodeSha256": "41sT0IqcN6XkQWEjWElS0bZO5X9MBi4IY6zc4SO0c1Q="
             }
           },
-          "SearchDashrestaurantsLambdaVersionwO8XQ5fiVJGyw350ozeqh9Wn9KHWyV3LBnIDumg": {
+          "SearchDashrestaurantsLambdaVersion5Qe9InPnPKZtaeOO6ECBFDNE8pxbxRbNrHCDqPox5pQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SearchDashrestaurantsLambdaFunction"
               },
-              "CodeSha256": "F48UbSkuCPBaZ7uTEz3/pwCjspdJDZ1hHvxHPouBZbo="
+              "CodeSha256": "41sT0IqcN6XkQWEjWElS0bZO5X9MBi4IY6zc4SO0c1Q="
             }
           },
-          "PlaceDashorderLambdaVersionSOXUPDbIrmtoCk7h0WvLvc79eHQphQclRKPLIda7sg": {
+          "PlaceDashorderLambdaVersion8T8mReY5O2mTXQgVEccNsEuJGR8gckzH4XHiFpZ9x60": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PlaceDashorderLambdaFunction"
               },
-              "CodeSha256": "F48UbSkuCPBaZ7uTEz3/pwCjspdJDZ1hHvxHPouBZbo="
+              "CodeSha256": "41sT0IqcN6XkQWEjWElS0bZO5X9MBi4IY6zc4SO0c1Q="
             }
           },
-          "NotifyDashrestaurantLambdaVersionsxhloG2kHwjW8YL1lYWKTDUfjOZ7jzFSgoM0cpOPU": {
+          "NotifyDashrestaurantLambdaVersionypeuCPTkmjfRwf9RggBERWg4mebPxcyGscuMBQs4VJI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "NotifyDashrestaurantLambdaFunction"
               },
-              "CodeSha256": "F48UbSkuCPBaZ7uTEz3/pwCjspdJDZ1hHvxHPouBZbo="
+              "CodeSha256": "41sT0IqcN6XkQWEjWElS0bZO5X9MBi4IY6zc4SO0c1Q="
             }
           },
           "ApiGatewayRestApi": {
@@ -728,7 +728,7 @@
               ]
             }
           },
-          "ApiGatewayDeployment1637942513290": {
+          "ApiGatewayDeployment1637945937673": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1676,7 +1676,7 @@
           "GetDashindexLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetDashindexLambdaVersionJaE9iFJBUFGHJWQvH77nqGi43bAVCfRtnzkwORuICk"
+              "Ref": "GetDashindexLambdaVersionkNT9LrbCycNIiaCMQB8q2hmek4h4VSOrgbjxbsy2c"
             },
             "Export": {
               "Name": "sls-workshop-samrevanoor-sam-GetDashindexLambdaFunctionQualifiedArn"
@@ -1685,7 +1685,7 @@
           "GetDashrestaurantsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetDashrestaurantsLambdaVersiono263qMK7ZAwnMjyQH5yaS5FRbmRZC1vpTn6iISsxqqo"
+              "Ref": "GetDashrestaurantsLambdaVersion5sqlLYgQj0BAqqLxTkLRVo5KeDySDs6Puus5bpnYBT8"
             },
             "Export": {
               "Name": "sls-workshop-samrevanoor-sam-GetDashrestaurantsLambdaFunctionQualifiedArn"
@@ -1694,7 +1694,7 @@
           "SearchDashrestaurantsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SearchDashrestaurantsLambdaVersionwO8XQ5fiVJGyw350ozeqh9Wn9KHWyV3LBnIDumg"
+              "Ref": "SearchDashrestaurantsLambdaVersion5Qe9InPnPKZtaeOO6ECBFDNE8pxbxRbNrHCDqPox5pQ"
             },
             "Export": {
               "Name": "sls-workshop-samrevanoor-sam-SearchDashrestaurantsLambdaFunctionQualifiedArn"
@@ -1703,7 +1703,7 @@
           "PlaceDashorderLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PlaceDashorderLambdaVersionSOXUPDbIrmtoCk7h0WvLvc79eHQphQclRKPLIda7sg"
+              "Ref": "PlaceDashorderLambdaVersion8T8mReY5O2mTXQgVEccNsEuJGR8gckzH4XHiFpZ9x60"
             },
             "Export": {
               "Name": "sls-workshop-samrevanoor-sam-PlaceDashorderLambdaFunctionQualifiedArn"
@@ -1712,7 +1712,7 @@
           "NotifyDashrestaurantLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "NotifyDashrestaurantLambdaVersionsxhloG2kHwjW8YL1lYWKTDUfjOZ7jzFSgoM0cpOPU"
+              "Ref": "NotifyDashrestaurantLambdaVersionypeuCPTkmjfRwf9RggBERWg4mebPxcyGscuMBQs4VJI"
             },
             "Export": {
               "Name": "sls-workshop-samrevanoor-sam-NotifyDashrestaurantLambdaFunctionQualifiedArn"
@@ -1840,6 +1840,7 @@
     "functions": {
       "get-index": {
         "handler": "functions/get-index.handler",
+        "memorySize": 256,
         "events": [
           {
             "http": {
@@ -1870,14 +1871,15 @@
         ],
         "name": "workshop-samrevanoor-sam-get-index",
         "package": {},
-        "memory": 1024,
+        "memory": 256,
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GetDashindexLambdaVersionJaE9iFJBUFGHJWQvH77nqGi43bAVCfRtnzkwORuICk"
+        "versionLogicalId": "GetDashindexLambdaVersionkNT9LrbCycNIiaCMQB8q2hmek4h4VSOrgbjxbsy2c"
       },
       "get-restaurants": {
         "handler": "functions/get-restaurants.handler",
+        "memorySize": 512,
         "events": [
           {
             "http": {
@@ -1907,11 +1909,11 @@
         ],
         "name": "workshop-samrevanoor-sam-get-restaurants",
         "package": {},
-        "memory": 1024,
+        "memory": 512,
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GetDashrestaurantsLambdaVersiono263qMK7ZAwnMjyQH5yaS5FRbmRZC1vpTn6iISsxqqo"
+        "versionLogicalId": "GetDashrestaurantsLambdaVersion5sqlLYgQj0BAqqLxTkLRVo5KeDySDs6Puus5bpnYBT8"
       },
       "search-restaurants": {
         "handler": "functions/search-restaurants.handler",
@@ -1960,7 +1962,7 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "SearchDashrestaurantsLambdaVersionwO8XQ5fiVJGyw350ozeqh9Wn9KHWyV3LBnIDumg"
+        "versionLogicalId": "SearchDashrestaurantsLambdaVersion5Qe9InPnPKZtaeOO6ECBFDNE8pxbxRbNrHCDqPox5pQ"
       },
       "place-order": {
         "handler": "functions/place-order.handler",
@@ -2003,7 +2005,7 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "PlaceDashorderLambdaVersionSOXUPDbIrmtoCk7h0WvLvc79eHQphQclRKPLIda7sg"
+        "versionLogicalId": "PlaceDashorderLambdaVersion8T8mReY5O2mTXQgVEccNsEuJGR8gckzH4XHiFpZ9x60"
       },
       "notify-restaurant": {
         "handler": "functions/notify-restaurant.handler",
@@ -2041,7 +2043,7 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "NotifyDashrestaurantLambdaVersionsxhloG2kHwjW8YL1lYWKTDUfjOZ7jzFSgoM0cpOPU"
+        "versionLogicalId": "NotifyDashrestaurantLambdaVersionypeuCPTkmjfRwf9RggBERWg4mebPxcyGscuMBQs4VJI"
       }
     },
     "resources": {
@@ -2386,7 +2388,7 @@
     "artifact": "/Users/samairerevanoor/Desktop/Dev/sls/production-ready-serverless-workshop/.serverless/workshop-samrevanoor.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/workshop-samrevanoor/sam/1637942530805-2021-11-26T16:02:10.805Z",
+    "artifactDirectoryName": "serverless/workshop-samrevanoor/sam/1637945954744-2021-11-26T16:59:14.744Z",
     "artifact": "workshop-samrevanoor.zip"
   }
 }

@@ -1,7 +1,6 @@
+const EventBridge = require("aws-sdk/clients/eventbridge");
 const XRay = require("aws-xray-sdk-core");
-const eventBridge = XRay.captureAWSClient(
-  require("@dazn/lambda-powertools-eventbridge-client")
-);
+const eventBridge = XRay.captureAWSClient(new EventBridge());
 const SNS = require("aws-sdk/clients/sns");
 const sns = XRay.captureAWSClient(new SNS());
 const Log = require("@dazn/lambda-powertools-logger");
@@ -18,7 +17,8 @@ module.exports.handler = wrap(async (event) => {
   };
   await sns.publish(snsReq).promise();
 
-  Log.debug("notified restaurant of order...");
+  const { restaurantName, orderId } = order;
+  Log.debug("notified restaurant of order...", { orderId, restaurantName });
 
   await eventBridge
     .putEvents({
